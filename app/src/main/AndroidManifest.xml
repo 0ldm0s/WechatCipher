@@ -13,7 +13,7 @@
             android:value="true" />
         <meta-data
             android:name="xposeddescription"
-            android:value="Suck your dick" />
+            android:value="Hey man, I'm gonna suck your dick" />
         <meta-data
             android:name="xposedminversion"
             android:value="82" />
@@ -27,6 +27,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+		
+		<activity
+			android:name=".ProfilesActivity"/>
+		
+		<activity
+			android:name=".ProfileActivity"/>
+		
+		<activity
+			android:name=".EditRuleActivity"/>
+		
+		<activity
+			android:name=".ManageRulesActivity"/>
+		
     </application>
 
 </manifest>
