@@ -1,13 +1,20 @@
 package rbq2012.wechatcipher;
 
-import android.app.*;
-import android.os.*;
+//import android.app.*;
+//import android.os.*;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Switch;
+import dalvik.system.DexClassLoader;
+import java.io.IOException;
+import java.io.DataInputStream;
 import android.widget.Toast;
-import de.robv.android.xposed.XSharedPreferences;
-import android.content.SharedPreferences;
-import android.content.Intent;
+import eu.chainfire.libsuperuser.Shell;
+import java.io.File;
+import java.lang.reflect.Method;
 
 public class MainActivity extends Activity{
 	
@@ -21,7 +28,9 @@ public class MainActivity extends Activity{
 	public void editProfiles(View v){
 		startActivity(new Intent(this,ProfilesActivity.class)
 			.putExtra(Constants.EXTRA_KEY_PROFILEFOR,Constants.SPREF_KEY_PROFILES_WECHAT)
-		);
+		 );
+		//Logger.setupIfNeed(new File(getFilesDir(),"log.txt"));
+		
 	}
 	
 	public void editPolicies(View v){
