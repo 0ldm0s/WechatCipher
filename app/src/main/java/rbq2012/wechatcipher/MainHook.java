@@ -32,28 +32,39 @@ import org.json.JSONObject;
 import static rbq2012.wechatcipher.Constants.*;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findAndHookConstructor;
+import static rbq2012.wechatcipher.Logger.log;
 
 public class MainHook extends XC_MethodHook
 implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackageResources{
 
-	static public EditText inpu=null,inpv=null;
 	static List<JSONObject> profiles=null;
 	static Map<String,CryptoRule> rules=null;
-	static int profmm=0,profqq=0;
+	static int prof=0;
+
+	static EditText inpu=null;
+	static TextView tvTitleMM=null;
+	static String titleMM=null;
+
 	static Class qqText=null;
+	static EditText inpv=null;
+	static TextView tvTitleQQ=null;
+	static String titleQQ=null;
 
 	@Override
 	public void handleLoadPackage(XC_LoadPackage.LoadPackageParam p1) throws Throwable{
 		if(p1.packageName.equals(Constants.PM_MM)){
+			initLogger();
+			log("Wechat started, loading plugin...");
 			XSharedPreferences spref=new XSharedPreferences(Constants.PM_THIS,Constants.SPREF_MAIN);
 			if(!spref.getBoolean(Constants.SPREF_KEY_WECHAT,false)){
-				flog("Disabled.for wechat");
+				log("Exited because this module was disabled.");
 				return;
 			}
 
 			if(profiles==null){
 				getProfiles();
-				profmm=0;
+				if(profiles.size()>0) prof=1;
+				else prof=0;
 			}
 
 			/* 在为发送按钮设置OnClickListener时，将微信原设置的Listener
@@ -66,32 +77,26 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 				protected void beforeHookedMethod(MethodHookParam param) throws Throwable{
 					View btn=(View)param.thisObject;
 					if(btn.getId()!=2131756121) return;
-					btn.setTag(btn.getId());
+					//log("It seems like the send button has been found, trying to inject");
 					btn.setTag(param.args[0]);
 					param.args[0]=new OnClickListener(){
 						@Override
 						public void onClick(View p1){
-							//插入在触发点击事件之前进行的处理，比如加密输入框的文本
 							try{
-								//Logger.log("prof="+prof);
 								String text=inpu.getText().toString();
-								Logger.log("text="+text);
-								if(profmm!=0){
-									JSONObject jso=profiles.get(profmm-1);
+								if(prof!=0){
+									JSONObject jso=profiles.get(prof-1);
 									CryptoRule rule=rules.get(jso.getString(JSON_KEY_ENCRULE));
-									//Logger.log(""+(text==null)+","+(rule==null));
-									//Thread.currentThread().sleep(1000);
 									String saf=Cryptoo.encrypt(text,rule);
-									inpu.setText(saf);
-									Logger.log("saf="+saf);
+									inpu.setText(saf);//这个输入框应该被事先捕获
 								}
 							}
 							catch(Exception e){
+								log("Failed encrypting message");
 								Logger.log(e);
 							}
 							OnClickListener fuck=(View.OnClickListener) (p1.getTag());
 							fuck.onClick(p1);
-							//插入在触发点击事件之后进行的处理，比如显示提示信息
 						}
 					};
 				}
@@ -126,19 +131,20 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 					View v=(View)param.thisObject;
 					if(v.getId()!=2131755346) return;
 					String text=null;
-					if(profmm!=0)try{
-							JSONObject jso=profiles.get(profmm-1);
+					if(prof!=0)try{
+							JSONObject jso=profiles.get(prof-1);
 							JSONArray ja=jso.getJSONArray(JSON_KEY_DECRULES);
 							String saf=(String) param.args[0];
 							for(int i=0;i<ja.length();i++){
 								CryptoRule rule=rules.get(ja.getString(i));
-								Logger.log("Trying to decrypt with rule "+rule.getName());
+								//log("Trying to decrypt with rule "+rule.getName());
 								text=Cryptoo.decrypt(saf,rule);
 								if(text!=null) break;
 							}
 						}
 						catch(Exception e){
-							//
+							log("Failed decrypting message");
+							log(e);
 						}
 					if(text!=null){
 						param.args[0]=text;
@@ -153,87 +159,97 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 				protected void beforeHookedMethod(MethodHookParam param) throws Throwable{
 					TextView v=(TextView)param.thisObject;
 					if(v.getId()!=2131755274) return;
+					tvTitleMM=v;
+					//log("It seems that toolbar of chat window has beem found.");
 					v.setTextSize(10);
 					v.setSingleLine(false);
 					v.setMaxLines(2);
-					//v.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
 					v.setOnClickListener(new OnClickListener(){
 							@Override
 							public void onClick(View p1){
 								selectProfile(p1,1);
 							}
 						});
-					param.args[0]="点击切换模式\n"+param.args[0];
+					String s=""+param.args[0];
+					titleMM=s;
+					param.args[0]=getTitle(s);log("sb250");
 				}
 			};
 			findAndHookMethod(TextView.class,"setText",CharSequence.class,hooktit);
+			//////////////Wechat END
+
+			//////////////QQ START
 		}else if(p1.packageName.equals(Constants.PM_QQ)){
+			initLogger();
+			log("QQ started, loading plugin");
 			XSharedPreferences spref=new XSharedPreferences(Constants.PM_THIS,Constants.SPREF_MAIN);
 			if(!spref.getBoolean(Constants.SPREF_KEY_WECHAT,false)){
-				flog("Disabled for QQ");
+				log("Exited because feature disabled for QQ");
 				return;
 			}
-			flog("en");
+			/* QQ气泡的文字使用其自定义类QQtext，需要
+			 * 加载该类以转换为普通字符串
+			 */
 			if(qqText==null)try{
-				String pd=null;
-				for(String s:Shell.SH.run("pm path com.tencent.mobileqq")){
-					if(s.startsWith("package:")){
-						pd=s.substring(8);
-						break;
+					String pd=null;
+					for(String s:Shell.SH.run("pm path com.tencent.mobileqq")){
+						if(s.startsWith("package:")){
+							pd=s.substring(8);
+							break;
+						}
+					}if(pd!=null){
+						DexClassLoader dl=new DexClassLoader(pd,p1.appInfo.dataDir,"/data/data/com.tencent.mobileqq/lib",p1.classLoader);
+						Logger.log(""+(dl==null));
+						qqText=dl.loadClass("com.tencent.mobileqq.text.QQText");
+					}else{
+						//QQ not installed
+						log("你装QQ了吗？");
 					}
-				}if(pd!=null){
-					Logger.log(pd);
-					Logger.log(p1.appInfo.dataDir);
-					Logger.log(""+(p1.classLoader==null));
-					DexClassLoader dl=new DexClassLoader(pd,p1.appInfo.dataDir,"/data/data/com.tencent.mobileqq/lib",p1.classLoader);
-					Logger.log(""+(dl==null));
-					qqText=dl.loadClass("com.tencent.mobileqq.text.QQText");
-					Method met=qqText.getMethod("toString");
-					flog("got tostring");
-				}else{
-					//QQ not installed
-					Logger.log("not found");
 				}
-			}catch(Exception e){
-				Logger.log(e);
-			}
-			//DexClassLoader dl=new DexClassLoader("/sdcard/####tmp/QQ.apk","/sdcard/","",p1.classLoader);
+				catch(Exception e){
+					log("Can't load QQText class");
+					log(e);
+					//return;
+				}
+				catch(Error e){
+					log("Can't load QQText class");
+					log(e);
+					//虽然不知道为毛会是Error
+					//return;
+				}
 			if(profiles==null){
 				getProfiles();
-				profmm=0;
+				if(profiles.size()>0) prof=1;
+				else prof=0;
 			}
-			flog("");
 			XC_MethodHook hooksend=new XC_MethodHook(){
 				@Override
 				protected void beforeHookedMethod(MethodHookParam param) throws Throwable{
 					View btn=(View)param.thisObject;
 					if(btn.getId()!=2131363129) return;
+					//log("It seems like the send button has been found, trying to inject");
 					btn.setTag(param.args[0]);
 					param.args[0]=new OnClickListener(){
 						@Override
 						public void onClick(View p1){
-							//插入在触发点击事件之前进行的处理，比如加密输入框的文本
-							//int id=p1.getId();
 							try{
-								//Logger.log("prof="+prof);
 								String text=inpv.getText().toString();
-								Logger.log("text="+text);
-								if(profqq!=0){
-									JSONObject jso=profiles.get(profqq-1);
+								//Logger.log("text="+text);
+								if(prof!=0){
+									JSONObject jso=profiles.get(prof-1);
 									CryptoRule rule=rules.get(jso.getString(JSON_KEY_ENCRULE));
 									//Logger.log(""+(text==null)+","+(rule==null));
-									//Thread.currentThread().sleep(1000);
 									String saf=Cryptoo.encrypt(text,rule);
-									inpv.setText(saf);
-									Logger.log("saf="+saf);
+									inpv.setText(saf);//这个输入框应该事先被捕获
+									//Logger.log("saf="+saf);
 								}
 							}
 							catch(Exception e){
+								log("obd9hd");
 								Logger.log(e);
 							}
 							OnClickListener fuck=(View.OnClickListener) (p1.getTag());
 							fuck.onClick(p1);
-							//插入在触发点击事件之后进行的处理，比如显示提示信息
 						}
 					};
 				}
@@ -263,29 +279,27 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 					View v=(View)param.thisObject;
 					if(v.getId()!=0x7f0a0048) return;
 					String text=null;
-					if(profqq!=0)try{
-							JSONObject jso=profiles.get(profqq-1);
+					if(prof!=0)try{
+							JSONObject jso=profiles.get(prof-1);
 							JSONArray ja=jso.getJSONArray(JSON_KEY_DECRULES);
-							//Class clazz=Class.forName("com.tencent.mobileqq.text.QQText");
 							Method met=qqText.getMethod("toString");
 							String saf=(String) met.invoke(param.args[0]);
-							flog("saa="+saf);
-							//if(true) return;
-							//String saf=(String) param.args[0];
+							//log("saa="+saf);
 							for(int i=0;i<ja.length();i++){
 								CryptoRule rule=rules.get(ja.getString(i));
-								Logger.log("Trying to decrypt with rule "+rule.getName());
+								//Logger.log("Trying to decrypt with rule "+rule.getName());
 								text=Cryptoo.decrypt(saf,rule);
 								if(text!=null) break;
 							}
 						}
 						catch(Exception e){
+							log("fbofob");
 							Logger.log(e);
 						}
 					if(text!=null){
 						param.args[0]=text;
 					}else{
-						//param.args[0]="999";
+						//param.args[0]="999";???
 					}
 				}
 			};
@@ -296,17 +310,25 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 				protected void beforeHookedMethod(MethodHookParam param) throws Throwable{
 					TextView v=(TextView)param.thisObject;
 					if(v.getId()==0x7f0a0419){
-					v.setTextSize(10);
-					v.setSingleLine(false);
-					v.setMaxLines(2);
-					//v.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
-					v.setOnClickListener(new OnClickListener(){
-							@Override
-							public void onClick(View p1){
-								selectProfile(p1,2);
-							}
-						});
-					param.args[0]="点击切换模式\n"+param.args[0];
+						if(v.getMaxLines()==2) return;
+						/*flog("kli"+v.getMaxLines());
+						log("1er"+v.getTextSize());
+						log("wer"+param.args[0]);*/
+						tvTitleQQ=v;
+						v.setTextSize(10);
+						v.setSingleLine(false);
+						v.setMaxLines(3);
+						v.setOnClickListener(new OnClickListener(){
+								@Override
+								public void onClick(View p1){
+									selectProfile(p1,2);
+								}
+							});
+						String s=param.args[0].toString();
+						titleQQ=s;
+						param.args[0]=getTitle(s);
+						//updateTitle(2);
+						//param.args[0]="点击切换模式\n"+param.args[0];
 					}
 				}
 			};
@@ -336,13 +358,8 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 					@Override
 					public void onClick(DialogInterface p1,int p2){
 						if(p2<profiles.size()+1){
-							switch(forwho){
-							case 1:
-								profmm=p2;
-								break;
-							case 2:
-								profqq=p2;
-							}
+							prof=p2;
+							updateTitle(forwho);
 							return;
 						}
 						getProfiles();
@@ -354,6 +371,47 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 		}
 		catch(Exception e){
 			Logger.log(e);
+		}
+	}
+
+	private String getTitle(String ori){
+		StringBuilder sb=new StringBuilder(ori);
+		sb.append("\n");
+		if(prof==0){
+			sb.append("未加密");
+		}else{
+			try{
+				String pn=profiles.get(prof-1).getString(JSON_KEY_NAME);
+				sb.append("当前方案 ").append(pn);
+			}
+			catch(JSONException e){
+				sb.append("无法获取当前方案");
+			}
+		}
+		sb.append(",点击切换");
+		//log("gettitle="+sb.toString()+"end");
+		return sb.toString();
+	}
+
+	private void updateTitle(int forwho){
+		log("at");
+		try{
+			TextView tv;
+			String tit;
+			if(forwho==1){
+				tv=tvTitleMM;
+				tit=titleMM;
+			}else{
+				tv=tvTitleQQ;
+				tit=titleQQ;
+			}//tit=getTitle(tit);
+			//log("new tit="+tit.replace("\n","\\n"));
+			log("exp sb");
+			tv.setText(tit);
+			log("inm sb");
+		}
+		catch(Exception e){
+			flog(e);
 		}
 	}
 
@@ -386,21 +444,29 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 
 	@Override
 	public void handleInitPackageResources(XC_InitPackageResources.InitPackageResourcesParam p1) throws Throwable{
-		/*if(!p1.packageName.equals(PM_MM)) return;
-		 flog("handleInitPackageResources");*/
+		//没用…
 	}
 
 	@Override
 	public void initZygote(IXposedHookZygoteInit.StartupParam p1) throws Throwable{
-		flog("initZygote");
+		//辣鸡…
 	}
 
-	static private void flog(String s){
+	static private void initLogger(){
 		try{
-			Logger.setupIfNeed(new File(Constants.LOG_FILE));
-			Logger.log(s);
+			Logger.setupIfNeed(new File(LOG_FILE));
 		}
 		catch(Exception e){}
+	}
+
+	static void flog(String s){
+		initLogger();
+		log(s);
+	}
+
+	static void flog(Throwable s){
+		initLogger();
+		log(s);
 	}
 
 }

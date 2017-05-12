@@ -45,7 +45,7 @@ public class Logger{
 		}
 	}
 	
-	static public void log(Exception e){
+	static public void log(Throwable e){
 		if(usable){
 			log("ERROR "+e.toString()+": ");
 			e.printStackTrace(pw);
