@@ -22,7 +22,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 
-public class ManageRulesActivity extends Activity{
+public class ManageRulesActivity extends BaseActivity{
 
 	private SharedPreferences spref;
 	private RulesAdapter ada;

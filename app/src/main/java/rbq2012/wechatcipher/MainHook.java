@@ -56,7 +56,7 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 			initLogger();
 			log("Wechat started, loading plugin...");
 			XSharedPreferences spref=new XSharedPreferences(Constants.PM_THIS,Constants.SPREF_MAIN);
-			if(!spref.getBoolean(Constants.SPREF_KEY_WECHAT,false)){
+			if(!spref.getBoolean(Constants.SPREF_KEY_WECHAT,true)){
 				log("Exited because this module was disabled.");
 				return;
 			}
@@ -183,7 +183,7 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 			initLogger();
 			log("QQ started, loading plugin");
 			XSharedPreferences spref=new XSharedPreferences(Constants.PM_THIS,Constants.SPREF_MAIN);
-			if(!spref.getBoolean(Constants.SPREF_KEY_WECHAT,false)){
+			if(!spref.getBoolean(Constants.SPREF_KEY_WECHAT,true)){
 				log("Exited because feature disabled for QQ");
 				return;
 			}
@@ -389,12 +389,10 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 			}
 		}
 		sb.append(",点击切换");
-		//log("gettitle="+sb.toString()+"end");
 		return sb.toString();
 	}
 
 	private void updateTitle(int forwho){
-		log("at");
 		try{
 			TextView tv;
 			String tit;
@@ -404,11 +402,8 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 			}else{
 				tv=tvTitleQQ;
 				tit=titleQQ;
-			}//tit=getTitle(tit);
-			//log("new tit="+tit.replace("\n","\\n"));
-			log("exp sb");
+			}
 			tv.setText(tit);
-			log("inm sb");
 		}
 		catch(Exception e){
 			flog(e);

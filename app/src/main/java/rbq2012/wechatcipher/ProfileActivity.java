@@ -25,7 +25,7 @@ import android.widget.EditText;
 import org.json.JSONArray;
 import java.io.File;
 
-public class ProfileActivity extends Activity{
+public class ProfileActivity extends BaseActivity{
 
 	private int selInfo;
 	private DecRulesAdapter ada;

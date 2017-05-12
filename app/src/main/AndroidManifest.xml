@@ -13,7 +13,7 @@
             android:value="true" />
         <meta-data
             android:name="xposeddescription"
-            android:value="Hey man, I'm gonna suck your dick" />
+            android:value="让用户使用QQ和微信时免遭大青果监视" />
         <meta-data
             android:name="xposedminversion"
             android:value="82" />
@@ -31,16 +31,20 @@
         </activity>
 		
 		<activity
-			android:name=".ProfilesActivity"/>
+			android:name=".ProfilesActivity"
+			android:label="方案管理"/>
 		
 		<activity
-			android:name=".ProfileActivity"/>
+			android:name=".ProfileActivity"
+			android:label="编辑"/>
 		
 		<activity
-			android:name=".EditRuleActivity"/>
+			android:name=".EditRuleActivity"
+			android:label="编辑"/>
 		
 		<activity
-			android:name=".ManageRulesActivity"/>
+			android:name=".ManageRulesActivity"
+			android:label="加密解密规则"/>
 		
     </application>
 

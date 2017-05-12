@@ -4,31 +4,42 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:gravity="center"
-	android:orientation="vertical"
-	android:paddingLeft="30dp"
-	android:paddingRight="30dp">
+	android:orientation="vertical">
 
 	<Switch
 		android:layout_height="wrap_content"
 		android:layout_width="match_parent"
 		android:onClick="switchWechatEncrypt"
-		android:text="微信聊天加密"
+		android:text="总开关(微信QQ异常时才用关)"
 		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:id="@+id/mainSwWechat"/>
+		android:id="@+id/mainSwWechat"
+		android:padding="25dp"/>
+
+	<View
+		android:background="?android:attr/dividerVertical"
+		android:layout_height="1dp"
+		android:layout_width="match_parent"/>
 
 	<TextView
 		android:layout_height="wrap_content"
 		android:layout_width="match_parent"
-		android:text="方案编辑..."
+		android:text="方案编辑"
 		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:onClick="editProfiles"/>
+		android:onClick="editProfiles"
+		android:padding="25dp"/>
+
+	<View
+		android:background="?android:attr/dividerVertical"
+		android:layout_height="1dp"
+		android:layout_width="match_parent"/>
 
 	<TextView
 		android:layout_height="wrap_content"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:layout_width="match_parent"
-		android:text="策略管理器"
-		android:onClick="editPolicies"/>
+		android:text="加密解密规则管理"
+		android:onClick="editPolicies"
+		android:padding="25dp"/>
 
 </LinearLayout>
 

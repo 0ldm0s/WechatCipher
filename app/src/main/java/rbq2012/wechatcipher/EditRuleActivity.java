@@ -13,7 +13,7 @@ import android.widget.Toast;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 
-public class EditRuleActivity extends Activity{
+public class EditRuleActivity extends BaseActivity{
 
 	private boolean hasFn;
 	private int mode,met,pp,index;

@@ -16,7 +16,7 @@ import eu.chainfire.libsuperuser.Shell;
 import java.io.File;
 import java.lang.reflect.Method;
 
-public class MainActivity extends Activity{
+public class MainActivity extends BaseActivity{
 	
 	SharedPreferences spref;
 	
@@ -43,6 +43,6 @@ public class MainActivity extends Activity{
         setContentView(R.layout.mmain);
 		spref=getSharedPreferences(Constants.SPREF_MAIN,Activity.MODE_WORLD_READABLE);
 		Switch sw=(Switch) findViewById(R.id.mainSwWechat);
-		sw.setChecked(spref.getBoolean(Constants.SPREF_KEY_WECHAT,false));
+		sw.setChecked(spref.getBoolean(Constants.SPREF_KEY_WECHAT,true));
     }
 }

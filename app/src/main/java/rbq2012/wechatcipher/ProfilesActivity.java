@@ -22,7 +22,7 @@ import org.json.JSONObject;
 import static rbq2012.wechatcipher.Constants.*;
 import java.io.File;
 
-public class ProfilesActivity extends Activity{
+public class ProfilesActivity extends BaseActivity{
 
 	private ProfilesListAdapter ada;
 	private String key;

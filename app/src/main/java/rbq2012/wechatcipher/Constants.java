@@ -3,7 +3,7 @@ package rbq2012.wechatcipher;
 public class Constants{
 	
 	static final public String PM_THIS="rbq2012.wechatcipher";
-	static final public String LOG_FILE="/sdcard/#xp/log.txt";
+	static final public String LOG_FILE="/sdcard/shadowchatlog.txt";
 	static final public String PM_MM="com.tencent.mm";
 	static final public String PM_QQ="com.tencent.mobileqq";
 	
