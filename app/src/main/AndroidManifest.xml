@@ -46,6 +46,19 @@
 			android:name=".ManageRulesActivity"
 			android:label="加密解密规则"/>
 		
+		<service android:name=".ShadowChatAssService"
+			android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+			android:label="@string/app_name">
+			
+			<meta-data
+				android:name="android.accessibilityservice"
+				android:resource="@xml/ass_config" />
+			
+			<intent-filter>
+				<action android:name="android.accessibilityservice.AccessibilityService" />
+			</intent-filter>
+		</service>
+		
     </application>
 
 </manifest>

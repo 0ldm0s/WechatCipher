@@ -1,7 +1,7 @@
 package rbq2012.wechatcipher;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+//import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,6 +24,7 @@ import static rbq2012.wechatcipher.Constants.*;
 import android.widget.EditText;
 import org.json.JSONArray;
 import java.io.File;
+import android.support.v7.app.AlertDialog;
 
 public class ProfileActivity extends BaseActivity{
 
@@ -86,7 +87,7 @@ public class ProfileActivity extends BaseActivity{
 			aa[i]=r.getName();
 		}
 		selItems=aa;
-		AlertDialog dia=new AlertDialog.Builder(this)
+		AlertDialog dia=new AlertDialog.Builder(this)//,R.style.AppTheme)
 			.setTitle("选择一条")
 			.setItems(rs,new DialogInterface.OnClickListener(){
 				@Override

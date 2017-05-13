@@ -15,6 +15,7 @@ import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
+import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_InitPackageResources;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import eu.chainfire.libsuperuser.Shell;
@@ -33,6 +34,8 @@ import static rbq2012.wechatcipher.Constants.*;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findAndHookConstructor;
 import static rbq2012.wechatcipher.Logger.log;
+import android.widget.Toast;
+import android.os.Bundle;
 
 public class MainHook extends XC_MethodHook
 implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackageResources{
@@ -49,6 +52,9 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 	static EditText inpv=null;
 	static TextView tvTitleQQ=null;
 	static String titleQQ=null;
+	static Object qqMainActivity=null;
+	static Context ctx=null;
+	static Class<?> qqSplashClazz=null;
 
 	@Override
 	public void handleLoadPackage(XC_LoadPackage.LoadPackageParam p1) throws Throwable{
@@ -217,6 +223,23 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 					//虽然不知道为毛会是Error
 					//return;
 				}
+			//log("20p4");
+			XC_MethodHook hookmainact=new XC_MethodHook(){
+				@Override
+				protected void beforeHookedMethod(MethodHookParam param) throws Throwable{
+					//Method met=qqSplashClazz.getMethod(g
+					ctx=(Context) param.thisObject;
+					//log("sbsbsb");
+					Toast.makeText(ctx,"www",0).show();
+					String vcode=ctx.getPackageManager().getPackageInfo(PM_QQ,0).versionName;
+					if(vcode.equals("7.0.0")) ViewVeri.version=700;
+					else if(vcode.startsWith("6.7")) ViewVeri.version=671;
+					else Toast.makeText(ctx,"好像不支持此版本，如果异常请关毙",0).show();
+				}
+			};
+			qqSplashClazz=XposedHelpers.findClass("com.tencent.mobileqq.activity.SplashActivity",p1.classLoader);
+			findAndHookMethod(qqSplashClazz,"doOnCreate",Bundle.class,hookmainact);
+			//if(0<256) return;
 			if(profiles==null){
 				getProfiles();
 				if(profiles.size()>0) prof=1;
@@ -226,7 +249,7 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 				@Override
 				protected void beforeHookedMethod(MethodHookParam param) throws Throwable{
 					View btn=(View)param.thisObject;
-					if(btn.getId()!=2131363129) return;
+					if(!ViewVeri.isQqSendbtn(btn)) return;
 					//log("It seems like the send button has been found, trying to inject");
 					btn.setTag(param.args[0]);
 					param.args[0]=new OnClickListener(){
@@ -262,10 +285,10 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 			XC_MethodHook hooket=new XC_MethodHook(){
 				@Override
 				protected void afterHookedMethod(MethodHookParam param) throws Throwable{
-					View v=(View) param.thisObject;
-					if(v.getId()==2131363128){
+					EditText v=(EditText) param.thisObject;
+					if(ViewVeri.isQqTextbox(v)){
 						v.setBackgroundColor(Color.GREEN);
-						inpv=(EditText) v;
+						inpv=v;
 					}
 				}
 			};
@@ -276,8 +299,8 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 			XC_MethodHook hookbub=new XC_MethodHook(){
 				@Override
 				protected void beforeHookedMethod(MethodHookParam param) throws Throwable{
-					View v=(View)param.thisObject;
-					if(v.getId()!=0x7f0a0048) return;
+					TextView v=(TextView)param.thisObject;
+					if(!ViewVeri.isQqBubtext(v)) return;
 					String text=null;
 					if(prof!=0)try{
 							JSONObject jso=profiles.get(prof-1);
@@ -309,8 +332,7 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 				@Override
 				protected void beforeHookedMethod(MethodHookParam param) throws Throwable{
 					TextView v=(TextView)param.thisObject;
-					if(v.getId()==0x7f0a0419){
-						if(v.getMaxLines()==2) return;
+					if(ViewVeri.isQqTitle(v)){
 						/*flog("kli"+v.getMaxLines());
 						log("1er"+v.getTextSize());
 						log("wer"+param.args[0]);*/
