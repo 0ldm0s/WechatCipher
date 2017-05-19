@@ -6,6 +6,30 @@
 	android:gravity="center"
 	android:orientation="vertical">
 
+	<LinearLayout
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:orientation="horizontal"
+		android:padding="25dp"
+		android:gravity="center_vertical">
+
+		<ImageView
+			android:layout_height="50dp"
+			android:layout_width="50dp"
+			android:src="@drawable/ic_launcher"/>
+
+		<TextView
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:text="自动加密您通过QQ和微信发送的文字消息，并且解密收到的消息，以保护聊天内容不被腾讯公司和任何其他机构或个人获取。其他用户需要安装此插件以解密您的消息。"/>
+
+	</LinearLayout>
+
+	<View
+		android:background="?android:attr/dividerVertical"
+		android:layout_height="1dp"
+		android:layout_width="match_parent"/>
+
 	<Switch
 		android:layout_height="wrap_content"
 		android:layout_width="match_parent"
@@ -40,6 +64,19 @@
 		android:text="加密解密规则管理"
 		android:onClick="editPolicies"
 		android:padding="25dp"/>
+
+	<View
+		android:background="?android:attr/dividerVertical"
+		android:layout_height="1dp"
+		android:layout_width="match_parent"/>
+
+	<TextView
+		android:layout_height="wrap_content"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:layout_width="match_parent"
+		android:text="食用方法"
+		android:padding="25dp"
+		android:onClick="showHelp"/>
 
 </LinearLayout>
 

@@ -37,6 +37,10 @@ public class MainActivity extends BaseActivity{
 		startActivity(new Intent(this,ManageRulesActivity.class));
 	}
 	
+	public void showHelp(View v){
+		startActivity(new Intent(this,HelpActivity.class));
+	}
+	
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
