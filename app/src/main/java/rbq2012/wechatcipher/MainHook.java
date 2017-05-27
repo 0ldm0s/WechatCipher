@@ -36,6 +36,7 @@ import static de.robv.android.xposed.XposedHelpers.findAndHookConstructor;
 import static rbq2012.wechatcipher.Logger.log;
 import android.widget.Toast;
 import android.os.Bundle;
+import android.app.Activity;
 
 public class MainHook extends XC_MethodHook
 implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackageResources{
@@ -52,7 +53,7 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 	static EditText inpv=null;
 	static TextView tvTitleQQ=null;
 	static String titleQQ=null;
-	static Object qqMainActivity=null;
+	static Activity qqMainActivity=null;
 	static Context ctx=null;
 	static Class<?> qqSplashClazz=null;
 
@@ -229,6 +230,7 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 				protected void beforeHookedMethod(MethodHookParam param) throws Throwable{
 					//Method met=qqSplashClazz.getMethod(g
 					ctx=(Context) param.thisObject;
+					//qqMainActivity=(Activity) param.thisObject;
 					//log("sbsbsb");
 					Toast.makeText(ctx,"www",0).show();
 					String vcode=ctx.getPackageManager().getPackageInfo(PM_QQ,0).versionName;
@@ -316,8 +318,9 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 							}
 						}
 						catch(Exception e){
-							log("fbofob");
-							Logger.log(e);
+							//It's normal no need to log
+							//log("fbofob");
+							//Logger.log(e);
 						}
 					if(text!=null){
 						param.args[0]=text;
@@ -332,6 +335,7 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 				@Override
 				protected void beforeHookedMethod(MethodHookParam param) throws Throwable{
 					TextView v=(TextView)param.thisObject;
+					//qqMainActivity.getFragmentManager().
 					if(ViewVeri.isQqTitle(v)){
 						/*flog("kli"+v.getMaxLines());
 						log("1er"+v.getTextSize());
@@ -363,19 +367,19 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 	private void selectProfile(View v,final int forwho){
 		try{
 			String[] list=new String[profiles.size()+2];
-			list[0]="不使用";
+			list[0]="不使用/None";
 			for(int i=0;i<profiles.size();i++){
 				try{
 					list[i+1]=profiles.get(i).getString(JSON_KEY_NAME);
 				}
 				catch(JSONException e){
-					list[i+1]="加载失败";
+					list[i+1]="加载失败/Failed loading";
 				}
 			}
-			list[profiles.size()+1]="刷新列表";
+			list[profiles.size()+1]="刷新列表/Refresh";
 			//list=new String[]{"0","8"};
 			AlertDialog dia=new AlertDialog.Builder(v.getContext())
-				.setTitle("选择方案")
+				.setTitle("选择方案/Select profile")
 				.setItems(list,new DialogInterface.OnClickListener(){
 					@Override
 					public void onClick(DialogInterface p1,int p2){
@@ -400,17 +404,17 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 		StringBuilder sb=new StringBuilder(ori);
 		sb.append("\n");
 		if(prof==0){
-			sb.append("未加密");
+			sb.append("未加密/Not enc");
 		}else{
 			try{
 				String pn=profiles.get(prof-1).getString(JSON_KEY_NAME);
-				sb.append("当前方案 ").append(pn);
+				sb.append("当前/Using ").append(pn);
 			}
 			catch(JSONException e){
-				sb.append("无法获取当前方案");
+				sb.append("无法获取当前方案/Failed");
 			}
 		}
-		sb.append(",点击切换");
+		sb.append(",点击切换/Click change");
 		return sb.toString();
 	}
 
@@ -449,7 +453,7 @@ implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackage
 			else rules.clear();
 			if(set!=null){
 				for(String s:set){
-					CryptoRule rule=CryptoRule.unserialize(s);
+					CryptoRule rule=CryptoRule.unserialize(s,null);
 					rules.put(rule.getName(),rule);
 				}
 			}

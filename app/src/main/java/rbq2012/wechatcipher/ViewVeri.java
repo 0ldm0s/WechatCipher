@@ -11,6 +11,10 @@ public class ViewVeri{
 		if(version==671 && tv.getId()==0x7f0a0419) return true;
 		if(version==700 && tv.getId()==0x7f0a0452){
 			if(tv.getMaxLines()==2) return false;
+			String str=tv.getText().toString();
+			if(str.contains("我的群名片")) return false;
+			if(str.contains("群介绍")) return false;
+			//tv.getParent().
 			return true;
 		}
 		return false;

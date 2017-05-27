@@ -21,7 +21,7 @@
 		<TextView
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
-			android:text="自动加密您通过QQ和微信发送的文字消息，并且解密收到的消息，以保护聊天内容不被腾讯公司和任何其他机构或个人获取。其他用户需要安装此插件以解密您的消息。"/>
+			android:text="@string/settings_main_intro"/>
 
 	</LinearLayout>
 
@@ -34,7 +34,7 @@
 		android:layout_height="wrap_content"
 		android:layout_width="match_parent"
 		android:onClick="switchWechatEncrypt"
-		android:text="总开关(微信QQ异常时才用关)"
+		android:text="@string/settings_main_switch"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:id="@+id/mainSwWechat"
 		android:padding="25dp"/>
@@ -47,7 +47,7 @@
 	<TextView
 		android:layout_height="wrap_content"
 		android:layout_width="match_parent"
-		android:text="方案编辑"
+		android:text="@string/settings_main_profiles"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:onClick="editProfiles"
 		android:padding="25dp"/>
@@ -61,7 +61,7 @@
 		android:layout_height="wrap_content"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:layout_width="match_parent"
-		android:text="加密解密规则管理"
+		android:text="@string/settings_main_rules"
 		android:onClick="editPolicies"
 		android:padding="25dp"/>
 
@@ -74,7 +74,7 @@
 		android:layout_height="wrap_content"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:layout_width="match_parent"
-		android:text="食用方法"
+		android:text="@string/settings_main_help"
 		android:padding="25dp"
 		android:onClick="showHelp"/>
 

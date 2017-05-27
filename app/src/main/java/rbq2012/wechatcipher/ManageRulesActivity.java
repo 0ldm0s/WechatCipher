@@ -136,7 +136,7 @@ public class ManageRulesActivity extends BaseActivity{
 			this.rules=policies;
 			if(raw==null) return;
 			for(String s:raw){
-				policies.add(CryptoRule.unserialize(s));
+				policies.add(CryptoRule.unserialize(s,getResources()));
 			}
 		}
 		
@@ -148,7 +148,7 @@ public class ManageRulesActivity extends BaseActivity{
 		}
 		
 		public void add(String name,String txtpfx,int mode,String extra,int met,int pp){
-			CryptoRule cp=new CryptoRule(name,txtpfx,mode,extra,met,pp);
+			CryptoRule cp=new CryptoRule(name,txtpfx,mode,extra,met,pp,getResources());
 			rules.add(cp);
 			notifyDataSetChanged();
 		}

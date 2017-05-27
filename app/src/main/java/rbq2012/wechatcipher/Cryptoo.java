@@ -18,7 +18,7 @@ public class Cryptoo
 {
 	
 	static String bas64="\nabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUIWXYZ0123456789/+=";
-	static String han64="。我你他她然后所以因为上下左右天地的了吗嘛行可一二三四五就换个土豆啦百度什么有，小猫喵兔子不吃鱼还差大量怎办啊喂其实也就快要呢噫嘻";
+	static String han64="。我你他她然后所以因为上下左右天地的了吗嘛行可一二三四五就换个土豆啦百度什么有，小猫喵兔子不吃鱼还差大量怎办啊喂其实也就快要呢噫嘻笑";
 	
 	static public String encrypt(String text,CryptoRule rule){
 		String code=rule.getExtra();

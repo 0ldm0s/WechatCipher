@@ -1,6 +1,7 @@
 package rbq2012.wechatcipher;
 import org.json.JSONException;
 import org.json.JSONObject;
+import android.content.res.Resources;
 
 public class CryptoRule{
 	
@@ -20,18 +21,20 @@ public class CryptoRule{
 	private String extra;
 	private int method;
 	private int  postp;
+	private Resources res;
 	
 	private CryptoRule(){
 		//
 	}
 	
-	public CryptoRule(String name,String txtpfx,int mode,String extra,int met,int pp){
+	public CryptoRule(String name,String txtpfx,int mode,String extra,int met,int pp,Resources res){
 		this.name=name;
 		this.txtPrefix=txtpfx;
 		this.encmode=mode;
 		this.extra=extra;
 		this.method=met;
 		this.postp=pp;
+		this.res=res;
 	}
 
 	public void setPostp(int postp){
@@ -81,16 +84,19 @@ public class CryptoRule{
 	@Override
 	public String toString(){
 		StringBuilder sb=new StringBuilder(name)
-		.append("    ，明文前缀: ")
+		.append("    ，")
+		.append(res.getString(R.string.crypto_prefix))
+		.append(": ")
 		.append(txtPrefix)
 		.append("，使用")
 		.append((encmode==0)?"口令":"密钥文件")
 		.append("进行加密。");
 		return sb.toString();
+		//useless
 	}
 	
 	public String getInfo(){
-		return String.format("明文前缀: %s, 加密方式: %s, 后处理方式: %s",
+		return res.getString(R.string.crypto_getinfo,
 			txtPrefix,Constants.RULE_METHODS[method],Constants.RULE_POSTPS[postp]
 		);
 	}
@@ -119,7 +125,7 @@ public class CryptoRule{
 		*/
 	}
 	
-	static public CryptoRule unserialize(String raw){
+	static public CryptoRule unserialize(String raw,Resources res){
 		CryptoRule cp=new CryptoRule();
 		try{
 			JSONObject jso=new JSONObject(raw);
@@ -131,6 +137,7 @@ public class CryptoRule{
 			cp.postp=jso.getInt(JSON_KEY_POSTP);
 		}
 		catch(JSONException e){}
+		cp.res=res;
 		return cp;
 	}
 }

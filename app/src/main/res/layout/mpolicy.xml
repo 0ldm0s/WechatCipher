@@ -19,7 +19,7 @@
 			<TextView
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
-				android:text="名称"/>
+				android:text="@string/settings_rule_name"/>
 
 			<EditText
 				android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
 		<TextView
 			android:layout_height="wrap_content"
 			android:layout_width="match_parent"
-			android:text="明文前缀(用于判断解密是否成功，建议使用5或更多字符的随机组合"/>
+			android:text="@string/settings_rule_prefix"/>
 
 		<EditText
 			android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
 			<TextView
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
-				android:text="加密使用"/>
+				android:text="@string/settings_rule_sol"/>
 
 			<RadioGroup
 				android:layout_height="wrap_content"
@@ -69,13 +69,13 @@
 				<RadioButton
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
-					android:text="口令"
+					android:text="@string/settings_rule_solcode"
 					android:id="@+id/mpolicyRb0"/>
 
 				<RadioButton
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
-					android:text="密钥文件"
+					android:text="@string/settings_rule_solkstore"
 					android:id="@+id/mpolicyRb1"/>
 
 			</RadioGroup>
@@ -97,7 +97,7 @@
 			<TextView
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
-				android:text="加密方式"/>
+				android:text="@string/settings_rule_method"/>
 
 			<TextView
 				android:layout_height="wrap_content"
@@ -122,7 +122,7 @@
 			<TextView
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
-				android:text="后处理"/>
+				android:text="@string/settings_rule_postp"/>
 
 			<TextView
 				android:layout_height="wrap_content"
@@ -145,7 +145,7 @@
 			<TextView
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
-				android:text="口令"/>
+				android:text="@string/settings_rule_code"/>
 
 			<EditText
 				android:layout_height="wrap_content"
@@ -160,7 +160,7 @@
 		<TextView
 			android:layout_height="wrap_content"
 			android:layout_width="match_parent"
-			android:text="点击这里选择密钥文件(暂不支持)"
+			android:text=""
 			android:padding="16dp"
 			android:onClick="selectKeystore"
 			android:id="@+id/mpolicyBoxMode1"/>

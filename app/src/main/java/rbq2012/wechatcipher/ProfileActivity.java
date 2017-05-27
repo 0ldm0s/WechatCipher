@@ -119,7 +119,7 @@ public class ProfileActivity extends BaseActivity{
 		CryptoRule[] rules=new CryptoRule[set.size()];
 		int i=0;
 		for(Iterator<String> it=set.iterator();it.hasNext();i++){
-			rules[i]=CryptoRule.unserialize(it.next());
+			rules[i]=CryptoRule.unserialize(it.next(),getResources());
 		}
 		return rules;
 	}

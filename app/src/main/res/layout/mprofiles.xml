@@ -13,7 +13,7 @@
 		style="?android:attr/buttonBarButtonStyle"
 		android:layout_height="wrap_content"
 		android:layout_width="match_parent"
-		android:text="添加"
+		android:text="@string/settings_global_add"
 		android:layout_below="@id/profilesListView1"
 		android:onClick="add"/>
 
@@ -28,7 +28,7 @@
 			style="?android:attr/buttonBarButtonStyle"
 			android:layout_height="wrap_content"
 			android:layout_width="0dp"
-			android:text="取消"
+			android:text="@string/settings_global_cancel"
 			android:layout_weight="0.5"
 			android:onClick="cancel"/>
 
@@ -41,7 +41,7 @@
 			style="?android:attr/buttonBarButtonStyle"
 			android:layout_height="wrap_content"
 			android:layout_width="0dp"
-			android:text="确定"
+			android:text="@string/settings_global_confirm"
 			android:layout_weight="0.5"
 			android:onClick="confirm"/>
 
